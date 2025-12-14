@@ -1,0 +1,24 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background-color: #333;
+  color: #eee;
+}
+
+#chessboard-board {
+  width: 30em !important;
+  flex-shrink: 0;
+}
+
+.spoiler {
+  background-color: #eee;
+  cursor: default;
+}
+
+.spoiler:hover {
+  background-color: transparent;
+}

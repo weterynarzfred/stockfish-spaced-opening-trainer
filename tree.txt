@@ -1,0 +1,24 @@
+ |- app
+ | |- api
+ | | |- challenge
+ | | | |- result
+ | | | | |- route.js
+ | | | |- route.js
+ | | |- precompute
+ | | | |- route.js
+ | | |- stockfish
+ | | | |- route.js
+ | |- globals.css
+ | |- layout.js
+ | |- lib
+ | | |- db.js
+ | | |- evalFen.js
+ | | |- parseStockfishResponse.js
+ | |- page.jsx
+ |- engine-cache.json
+ |- jsconfig.json
+ |- next.config.mjs
+ |- package-lock.json
+ |- package.json
+ |- player-data.json
+ |- README.md
