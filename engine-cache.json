@@ -74858,5 +74858,10 @@
     "bestMove": "f3e5",
     "eval": -0.12,
     "timeMs": 4590
+  },
+  "30_rnbqkb1r/pppp1ppp/4pn2/8/2PP4/8/PP2PPPP/RNBQKBNR w KQkq -": {
+    "bestMove": "g1f3",
+    "eval": 0.23,
+    "timeMs": 3333
   }
 }

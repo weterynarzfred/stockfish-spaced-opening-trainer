@@ -9,7 +9,6 @@ export default function Home() {
   const [fen, setFen] = useState(undefined);
   const [playerColor, setPlayerColor] = useState('');
   const [evaluation, setEvaluation] = useState(null);
-  const [bestMove, setBestMove] = useState(null);
   const [comment, setComment] = useState('');
   const [isLoading, setIsLoading] = useState(0);
   const [finishedComment, setFinishedComment] = useState('');
@@ -54,13 +53,11 @@ export default function Home() {
 
     setIsLoading(prev => prev + 1);
     setEvaluation("");
-    setBestMove(null);
 
     const res = await fetch(`/api/stockfish?fen=${encodeURIComponent(fen)}`);
     const data = await res.json();
 
     setEvaluation(data.eval);
-    setBestMove(data.bestMove);
     setIsLoading(prev => prev - 1);
   }, []);
 
@@ -191,8 +188,7 @@ export default function Home() {
           <hr />
           <br />
           <div>Evaluation: {evaluation !== null ? evaluation : "…"}</div>
-          <div>Best Move: <span className="spoiler">{bestMove ?? "…"}</span></div>
-          <div>Move List: <span className="spoiler">{moveList.join(', ')}</span></div>
+          <div>Move List: <span className={level > 0 ? "spoiler" : ""}>{moveList.join(', ')}</span></div>
           <div>Level: {level} — <small style={{ opacity: .6 }}>2<sup>{level}</sup> = {2 ** level}s</small></div>
         </div>
       </div>

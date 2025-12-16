@@ -10,7 +10,7 @@ if (!globalThis.engine) {
   globalThis.engine = spawn(ENGINE_PATH);
   globalThis.engine.stdin.write('uci\n');
   globalThis.engine.stdin.write('setoption name Threads value 24\n');
-  globalThis.engine.stdin.write('setoption name Hash value 32768\n');
+  globalThis.engine.stdin.write(`setoption name Hash value ${16 * 1024}\n`);
   globalThis.engine.stdin.write('setoption name MultiPV value 1\n');
   globalThis.engine.stdin.write('setoption name SyzygyPath value \n');
   globalThis.engine.stdin.write('isready\n');
