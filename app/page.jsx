@@ -3,37 +3,41 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
+import formatDuration from "@/app/lib/formatDuration";
 
 export default function Home() {
   const gameRef = useRef(null);
   const [fen, setFen] = useState(undefined);
-  const [playerColor, setPlayerColor] = useState('');
   const [evaluation, setEvaluation] = useState(null);
   const [comment, setComment] = useState('');
   const [isLoading, setIsLoading] = useState(0);
   const [finishedComment, setFinishedComment] = useState('');
-  const [moveList, setMoveList] = useState([]);
   const [moveIndex, setMoveIndex] = useState(0);
   const [challengeFinished, setChallengeFinished] = useState(false);
   const [startingFen, setStartingFen] = useState("");
   const [mistakes, setMistakes] = useState([]);
   const [level, setLevel] = useState([]);
+  const [playerData, setPlayerData] = useState({
+    challenge: {
+      playerColor: '',
+      moveList: [],
+    }
+  });
 
   const fetchChallenge = async () => {
     setIsLoading(prev => prev + 1);
     const res = await fetch(`/api/challenge`);
     const data = await res.json();
-    if (data.length === 0) {
+    if (data?.challenge === undefined) {
       setComment("no challenges available");
       setIsLoading(prev => prev - 1);
       return;
     }
-    const pos = data[0];
+    const pos = data.challenge;
+    setPlayerData(data);
 
-    setPlayerColor(pos.playerColor);
     gameRef.current = new Chess(pos.fen);
     setFen(gameRef.current.fen());
-    setMoveList(pos.moveList);
     setIsLoading(prev => prev - 1);
     setMoveIndex(0);
     setFinishedComment("");
@@ -66,18 +70,18 @@ export default function Home() {
   }, [fen, fetchEval]);
 
   const opponentMove = async () => {
-    console.log('opponent move', moveIndex, moveList.length);
+    console.log('opponent move', moveIndex, playerData.challenge.moveList.length);
 
     const nextIndex = moveIndex + 1;
 
-    if (nextIndex >= moveList.length) {
+    if (nextIndex >= playerData.challenge.moveList.length) {
       setFinishedComment("challenge completed");
       setChallengeFinished(true);
       await sendChallengeResult();
       return;
     }
 
-    const expectedMove = moveList[nextIndex];
+    const expectedMove = playerData.challenge.moveList[nextIndex];
 
     try {
       gameRef.current.move(expectedMove);
@@ -93,9 +97,9 @@ export default function Home() {
 
   const sendChallengeResult = async () => {
     const payload = {
-      playerColor,
+      playerColor: playerData.challenge.playerColor,
       startingFen,
-      moveList,
+      moveList: playerData.challenge.moveList,
       mistakes,
     };
 
@@ -117,13 +121,12 @@ export default function Home() {
     if (challengeFinished) return false;
 
     const isPlayerTurn =
-      (gameRef.current.turn() === "w" && playerColor === "w") ||
-      (gameRef.current.turn() === "b" && playerColor === "b");
+      (gameRef.current.turn() === "w" && playerData.challenge.playerColor === "w") ||
+      (gameRef.current.turn() === "b" && playerData.challenge.playerColor === "b");
 
     if (!isPlayerTurn) return false;
 
-
-    const expectedMove = moveList[moveIndex];
+    const expectedMove = playerData.challenge.moveList[moveIndex];
 
     let move;
     try {
@@ -163,6 +166,8 @@ export default function Home() {
     setFen(gameRef.current.fen());
   };
 
+  const delay = 120 * 1.5 ** level;
+
   return (
     <div style={{ padding: 20, fontFamily: "sans-serif" }}>
 
@@ -172,7 +177,7 @@ export default function Home() {
             options={{
               position: fen,
               onPieceDrop: onDrop,
-              boardOrientation: playerColor === 'b' ? 'black' : 'white',
+              boardOrientation: playerData.challenge.playerColor === 'b' ? 'black' : 'white',
             }}
           />
         </div>
@@ -184,12 +189,17 @@ export default function Home() {
             <div>{finishedComment}</div>
             <div>{isLoading ? '…thinking' : ''}</div>
           </div>
-          <br />
           <hr />
-          <br />
           <div>Evaluation: {evaluation !== null ? evaluation : "…"}</div>
-          <div>Move List: <span className={level > 0 ? "spoiler" : ""}>{moveList.join(', ')}</span></div>
-          <div>Level: {level} — <small style={{ opacity: .6 }}>2<sup>{level}</sup> = {2 ** level}s</small></div>
+          <div>Move List: <span className={level > 0 ? "spoiler" : ""}>{playerData.challenge.moveList.join(', ')}</span></div>
+          <div>Level: {level} — <small style={{ opacity: .6 }}>120 × 1.5<sup>{level}</sup> = {formatDuration(delay)}</small></div>
+          <hr />
+          <small>
+            <div>Overdue challenges count: {playerData.overdueCount}</div>
+            <div>Unseen challenges count: {playerData.notAttemptedCount}</div>
+            <div>Waiting challenges count: {playerData.waitingCount}</div>
+            {playerData.waitingCount > 0 ? <div style={{ opacity: .6 }}>Next waiting challenge will be due in: {formatDuration(playerData.waitingMinDelay / 1000)}</div> : null}
+          </small>
         </div>
       </div>
     </div >

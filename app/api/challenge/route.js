@@ -5,7 +5,7 @@ import evalFen from "@/app/lib/evalFen";
 
 const MIN_LEVEL_TO_CONTINUE = 17; // the level a player needs to reach before the branch continues
 const MAX_EVAL = 1; // don't challenge the player if they are already winning by this much. Increase to get more branches.
-const BASE_INTERVAL = 1000; // base time between repetitions in ms, this will grow exponentially with each level
+const BASE_INTERVAL = 120_000; // base time between repetitions in ms, this will grow exponentially with each level
 
 function getEvalFromPlayerPerspective(move) {
   if (move.eval.toString().startsWith('mate-')) move.eval = -100;
@@ -127,14 +127,19 @@ export async function GET() {
 
   const now = Date.now();
 
+  let waitingCount = 0;
+  let waitingMinDelay = Infinity;
   const challenges = (await challengesFromBranch(player))
     .filter(c => {
-      const interval = BASE_INTERVAL * 2 ** c.level;
+      const interval = BASE_INTERVAL * 1.5 ** c.level;
       const elapsed = now - c.lastSolved;
       c.overdue = c.lastSolved === 0 ? 0 : elapsed - interval;
       c.isOverdue = c.overdue > 0;
-      if (!c.isOverdue && c.lastSolved > 0) return false;
-      if (!c.isOverdue && now - c.lastAttempted < 1000 * 60) return false;
+      if (!c.isOverdue && c.lastSolved > 0) {
+        waitingCount++;
+        waitingMinDelay = Math.min(waitingMinDelay, -c.overdue);
+        return false;
+      }
 
       return c.evalFromPlayerPerspective <= MAX_EVAL;
     });
@@ -148,17 +153,19 @@ export async function GET() {
     if (a.isOverdue && b.isOverdue) {
       if (a.overdue !== b.overdue)
         return b.overdue - a.overdue;
-    } else {
-      // Neither overdue: lower level first
-      if (a.level !== b.level)
-        return a.level - b.level;
     }
 
-    // Same level: lower eval first
+    // Neither overdue: lower eval first
     return a.evalFromPlayerPerspective - b.evalFromPlayerPerspective;
   });
 
   savePlayerData();
 
-  return Response.json(challenges);
+  return Response.json({
+    challenge: challenges[0],
+    overdueCount: challenges.filter(c => c.isOverdue).length,
+    notAttemptedCount: challenges.filter(c => !c.isOverdue).length,
+    waitingCount,
+    waitingMinDelay,
+  });
 }

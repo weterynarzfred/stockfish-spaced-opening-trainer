@@ -74863,5 +74863,45 @@
     "bestMove": "g1f3",
     "eval": 0.23,
     "timeMs": 3333
+  },
+  "30_r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq -": {
+    "bestMove": "f1b5",
+    "eval": 0.26,
+    "timeMs": 2022
+  },
+  "30_rnbqkb1r/pppp1ppp/4pn2/8/3P1B2/8/PPP1PPPP/RN1QKBNR w KQkq -": {
+    "bestMove": "c2c3",
+    "eval": 0.15,
+    "timeMs": 3675
+  },
+  "30_rnbqkb1r/pppp1ppp/5n2/4p3/2P5/2N5/PP1PPPPP/R1BQKBNR w KQkq -": {
+    "bestMove": "f3d4",
+    "eval": 0,
+    "timeMs": 4419313
+  },
+  "30_rnbqkb1r/ppp1pppp/5n2/3p4/3P4/5N2/PPP1PPPP/RNBQKB1R w KQkq -": {
+    "bestMove": "f3d4",
+    "eval": 0,
+    "timeMs": 2415875
+  },
+  "30_r1bqkbnr/pppp1ppp/2n5/4p3/4P3/2N5/PPPP1PPP/R1BQKBNR w KQkq -": {
+    "bestMove": "f3d4",
+    "eval": 0,
+    "timeMs": 1698930
+  },
+  "30_rnbqkb1r/pppp1ppp/5n2/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR w KQkq -": {
+    "bestMove": "b1c3",
+    "eval": 0.11,
+    "timeMs": 2426
+  },
+  "30_r1bqkbnr/pppp1ppp/2n5/4p3/8/1P6/PBPPPPPP/RN1QKBNR w KQkq -": {
+    "bestMove": "e2e3",
+    "eval": -0.15,
+    "timeMs": 5998
+  },
+  "30_rnbqkbnr/pppp1ppp/8/8/2P1p3/5N2/PP1PPPPP/RNBQKB1R w KQkq -": {
+    "bestMove": "f3d4",
+    "eval": 0,
+    "timeMs": 1199
   }
 }

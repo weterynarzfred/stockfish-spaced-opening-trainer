@@ -22,3 +22,7 @@ body {
 .spoiler:hover {
   background-color: transparent;
 }
+
+hr {
+  margin: 1rem 0;
+}
