@@ -199,9 +199,12 @@ export default function Home() {
             <div>Unseen challenges count: {playerData.notAttemptedCount}</div>
             <div>Waiting challenges count: {playerData.waitingCount}</div>
             {playerData.waitingCount > 0 ? <div style={{ opacity: .6 }}>Next waiting challenge will be due in: {formatDuration(playerData.waitingMinDelay / 1000)}</div> : null}
+            <div>Challenge level sum: <code>// TODO</code></div>
+            <div>Best challenge list: <code>// TODO</code></div>
           </small>
         </div>
       </div>
+
     </div >
   );
 }

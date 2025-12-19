@@ -37,7 +37,7 @@ export async function POST(req) {
     node.lastAttempted = timestamp;
 
     if (hasMistake) {
-      node.level = Math.floor(node.level / 2);
+      node.level = Math.floor((node.level - 1) / 2);
     } else {
       node.level += 1;
       node.lastSolved = timestamp;
