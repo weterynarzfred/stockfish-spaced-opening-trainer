@@ -1,4 +1,4 @@
-import evalFen from "@/app/lib/evalFen";
+import evalFen from "@/app/lib/server/evalFen";
 import { Chess } from "chess.js";
 
 const MAX_DEPTH = 6; // total number of moves

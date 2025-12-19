@@ -1,4 +1,4 @@
-import { getPlayerData, savePlayerData } from "@/app/lib/db";
+import { getPlayerData, savePlayerData } from "@/app/lib/server/db";
 
 export async function POST(req) {
   const {
@@ -7,7 +7,7 @@ export async function POST(req) {
     mistakes,
   } = await req.json();
 
-  const playerData = getPlayerData();
+  const playerData = await getPlayerData();
 
   const rootKey = Object.keys(playerData).find(
     key => playerData[key].fen === startingFen

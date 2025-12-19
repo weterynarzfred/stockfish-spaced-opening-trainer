@@ -1,5 +1,7 @@
 import { JSONFilePreset } from 'lowdb/node';
 
+import initPlayer from "@/app/lib/server/initPlayer";
+
 function throttle(callback, ms) {
   let lastCall = 0;
   let timeout = null;
@@ -56,8 +58,12 @@ export function setCache(key, value) {
   throttledDBWrite(cacheDb);
 }
 
-export function getPlayerData() {
-  return playerDataDb.data;
+export async function getPlayerData() {
+  const player = playerDataDb.data;
+  if (Object.keys(player).length === 0)
+    await initPlayer(player);
+
+  return player;
 }
 
 export function savePlayerData(data) {

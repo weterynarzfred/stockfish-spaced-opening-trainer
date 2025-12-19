@@ -28,13 +28,13 @@ export default function Home() {
     setIsLoading(prev => prev + 1);
     const res = await fetch(`/api/challenge`);
     const data = await res.json();
+    setPlayerData(data);
     if (data?.challenge === undefined) {
       setComment("no challenges available");
       setIsLoading(prev => prev - 1);
       return;
     }
     const pos = data.challenge;
-    setPlayerData(data);
 
     gameRef.current = new Chess(pos.fen);
     setFen(gameRef.current.fen());
@@ -177,7 +177,7 @@ export default function Home() {
             options={{
               position: fen,
               onPieceDrop: onDrop,
-              boardOrientation: playerData.challenge.playerColor === 'b' ? 'black' : 'white',
+              boardOrientation: playerData.challenge?.playerColor === 'b' ? 'black' : 'white',
             }}
           />
         </div>
@@ -191,7 +191,7 @@ export default function Home() {
           </div>
           <hr />
           <div>Evaluation: {evaluation !== null ? evaluation : "…"}</div>
-          <div>Move List: <span className={level > 0 ? "spoiler" : ""}>{playerData.challenge.moveList.join(', ')}</span></div>
+          <div>Move List: <span className={level > 0 ? "spoiler" : ""}>{playerData.challenge?.moveList?.join(', ')}</span></div>
           <div>Level: {level} — <small style={{ opacity: .6 }}>120 × 1.5<sup>{level}</sup> = {formatDuration(delay)}</small></div>
           <hr />
           <small>

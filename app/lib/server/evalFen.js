@@ -1,16 +1,20 @@
 import { spawn } from 'child_process';
-import { getCache, setCache } from "@/app/lib/db";
-import parseStockfishResponse from "@/app/lib/parseStockfishResponse";
 
-const EVAL_DEPTH = 30;
-const ENGINE_PATH = 'C:/Program Files/ChessEngines/stockfish_17.1/stockfish-windows-x86-64-avx2.exe';
+import { getCache, setCache } from "@/app/lib/server/db";
+import parseStockfishResponse from "@/app/lib/server/parseStockfishResponse";
+import {
+  ENGINE_EVAL_DEPTH,
+  ENGINE_MAX_THREADS,
+  ENGINE_PATH,
+  ENGINE_RAM_USAGE
+} from "@/app/lib/config";
 
 if (!globalThis.engine) {
   console.log("----- starting the engine");
   globalThis.engine = spawn(ENGINE_PATH);
   globalThis.engine.stdin.write('uci\n');
-  globalThis.engine.stdin.write('setoption name Threads value 24\n');
-  globalThis.engine.stdin.write(`setoption name Hash value ${16 * 1024}\n`);
+  globalThis.engine.stdin.write(`setoption name Threads value ${ENGINE_MAX_THREADS}\n`);
+  globalThis.engine.stdin.write(`setoption name Hash value ${ENGINE_RAM_USAGE}\n`);
   globalThis.engine.stdin.write('setoption name MultiPV value 1\n');
   globalThis.engine.stdin.write('setoption name SyzygyPath value \n');
   globalThis.engine.stdin.write('isready\n');
@@ -36,7 +40,7 @@ function createDataListener({ resolve, startTime, fen, cacheKey }) {
 let queue = Promise.resolve();
 
 export default function evalFen(fen, log) {
-  let cacheKey = `${EVAL_DEPTH}_${fen}`.split(" ");
+  let cacheKey = `${ENGINE_EVAL_DEPTH}_${fen}`.split(" ");
   cacheKey.splice(-1);
   if (parseInt(cacheKey[cacheKey.length - 1]) < 20) cacheKey.splice(-1);
   cacheKey = cacheKey.join(" ");
@@ -58,7 +62,7 @@ function runEval(fen, cacheKey, log) {
 
     if (fen === 'startpos') globalThis.engine.stdin.write('position startpos\n');
     else globalThis.engine.stdin.write(`position fen ${fen}\n`);
-    globalThis.engine.stdin.write(`go depth ${EVAL_DEPTH}\n`);
+    globalThis.engine.stdin.write(`go depth ${ENGINE_EVAL_DEPTH}\n`);
   });
 };
 
