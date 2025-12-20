@@ -11,7 +11,7 @@ export default function formatDuration(totalSeconds) {
 
   for (const unit of units) {
     const amount = Math.floor(remaining / unit.value);
-    if (amount > 0) {
+    if (amount > 0 || parts.length > 0) {
       parts.push(`${amount}${unit.label}`);
       remaining -= amount * unit.value;
     }

@@ -1,7 +1,7 @@
 import evalFen from "@/app/lib/server/evalFen";
 import { Chess } from "chess.js";
 
-const MAX_DEPTH = 6; // total number of moves
+const MAX_DEPTH = 8; // total number of moves
 const TARGET_EVAL = 0.07;
 
 async function calcMoves(startFen) {

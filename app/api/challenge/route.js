@@ -6,13 +6,17 @@ export async function GET() {
 
   const {
     nextChallenge,
-    stats,
+    challengeStats,
+    playerStats,
+    topChallenges,
   } = await getNextChallenge(player);
 
   savePlayerData();
 
   return Response.json({
     challenge: nextChallenge,
-    ...stats,
+    ...challengeStats,
+    ...playerStats,
+    topChallenges,
   });
 }

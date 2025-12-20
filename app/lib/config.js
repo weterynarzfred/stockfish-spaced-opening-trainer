@@ -1,4 +1,4 @@
-export const MIN_LEVEL_TO_CONTINUE = 17; // the level a player needs to reach before the branch continues
+export const MIN_LEVEL_TO_CONTINUE = 15; // the level a player needs to reach before the branch continues
 export const MAX_EVAL = 3; // don't challenge the player if they are already winning by this much. Increase to get more branches.
 export const BASE_INTERVAL = 120_000; // base time between repetitions in ms, this will grow exponentially with each level
 

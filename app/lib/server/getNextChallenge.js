@@ -1,5 +1,6 @@
 import expandAndCollectChallenges from "@/app/lib/server/expandAndCollectChallenges";
 import { BASE_INTERVAL, MAX_EVAL } from "@/app/lib/config";
+import getEvalFromPlayerPerspective from "@/app/lib/getEvalFromPlayerPerspective";
 
 function isChallengeViable(challenge) {
   return challenge.evalFromPlayerPerspective <= MAX_EVAL;
@@ -25,7 +26,7 @@ function isAvailableNow(c) {
   return c.isOverdue || c.lastSolved === 0;
 }
 
-function computeStats(challenges) {
+function computeChallengeStats(challenges) {
   let waitingCount = 0;
   let waitingMinDelay = Infinity;
   let overdueCount = 0;
@@ -49,6 +50,32 @@ function computeStats(challenges) {
   };
 }
 
+function getBranches(branch) {
+  const acc = [];
+  for (const branchSan in branch) {
+    const move = branch[branchSan];
+    if (move.continuations !== undefined)
+      acc.push(...getBranches(move.continuations));
+
+    acc.push({
+      moveList: move.moveList,
+      level: move.level,
+      evalFromPlayerPerspective: getEvalFromPlayerPerspective(move),
+      fen: move.fen,
+    });
+  }
+
+  return acc;
+}
+
+function computePlayerStats(player) {
+  const branches = getBranches(player);
+
+  return {
+    levelSum: branches.reduce((sum, e) => sum + e.level, 0),
+  };
+}
+
 export async function getNextChallenge(player) {
   const now = Date.now();
 
@@ -56,12 +83,15 @@ export async function getNextChallenge(player) {
     .filter(isChallengeViable)
     .map(c => annotateChallengeTiming(c, now));
 
-  const stats = computeStats(allChallenges);
+  const challengeStats = computeChallengeStats(allChallenges);
+  const playerStats = computePlayerStats(player);
+  allChallenges.sort(sortChallenges);
   const available = allChallenges.filter(isAvailableNow);
-  available.sort(sortChallenges);
 
   return {
     nextChallenge: available[0],
-    stats,
+    challengeStats,
+    playerStats,
+    topChallenges: allChallenges.slice(0, 128),
   };
 }

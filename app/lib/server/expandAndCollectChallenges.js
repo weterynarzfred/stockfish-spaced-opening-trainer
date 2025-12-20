@@ -3,13 +3,14 @@ import getContinuations from "@/app/lib/server/getContinuations";
 import { MIN_LEVEL_TO_CONTINUE } from "@/app/lib/config";
 
 function shouldExpandBranch(branch) {
-  return branch.level >= MIN_LEVEL_TO_CONTINUE;
+  return branch.level >= MIN_LEVEL_TO_CONTINUE + branch.moveList.length / 2;
 }
 
 function branchToChallenge(branch, startingFen) {
   const challenge = {
     playerColor: branch.playerColor,
     moveList: [...branch.moveList],
+    fullMoveList: [...branch.moveList],
     bestMove: branch.bestMove,
     evalFromPlayerPerspective: getEvalFromPlayerPerspective(branch),
     level: branch.level,

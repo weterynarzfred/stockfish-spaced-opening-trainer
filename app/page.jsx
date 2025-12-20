@@ -21,7 +21,8 @@ export default function Home() {
     challenge: {
       playerColor: '',
       moveList: [],
-    }
+    },
+    topChallenges: [],
   });
 
   const fetchChallenge = async () => {
@@ -167,11 +168,12 @@ export default function Home() {
   };
 
   const delay = 120 * 1.5 ** level;
+  const now = Date.now();
 
   return (
     <div style={{ padding: 20, fontFamily: "sans-serif" }}>
 
-      <div style={{ display: "flex", gap: "40px" }}>
+      <div style={{ display: "flex", gap: "40px", alignItems: 'flex-start' }}>
         <div style={{ opacity: fen === undefined ? 0 : 1, transition: '.3s' }}>
           <Chessboard
             options={{
@@ -199,8 +201,20 @@ export default function Home() {
             <div>Unseen challenges count: {playerData.notAttemptedCount}</div>
             <div>Waiting challenges count: {playerData.waitingCount}</div>
             {playerData.waitingCount > 0 ? <div style={{ opacity: .6 }}>Next waiting challenge will be due in: {formatDuration(playerData.waitingMinDelay / 1000)}</div> : null}
-            <div>Challenge level sum: <code>// TODO</code></div>
-            <div>Best challenge list: <code>// TODO</code></div>
+            <div>Branch level sum: {playerData.levelSum}</div>
+            <div>Top branches list:
+              <div style={{ paddingLeft: '.5rem', display: 'grid', gridTemplateColumns: 'auto auto auto auto', gap: '0 1rem' }}>{
+                playerData.topChallenges.map(e => <div
+                  key={e.fullMoveList.join()}
+                  style={{ display: "contents" }}
+                >
+                  <div>{e.playerColor}: {e.fullMoveList.join(' ')}</div>
+                  <div>{e.evalFromPlayerPerspective}</div>
+                  <div>lvl {e.level}</div>
+                  <div>{formatDuration(120 * 1.5 ** e.level - (now - e.lastSolved) / 1000)}</div>
+                </div>)
+              }</div>
+            </div>
           </small>
         </div>
       </div>
