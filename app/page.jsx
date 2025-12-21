@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
 import formatDuration from "@/app/lib/formatDuration";
+import classNames from "classnames";
 
 export default function Home() {
   const gameRef = useRef(null);
@@ -14,9 +15,7 @@ export default function Home() {
   const [finishedComment, setFinishedComment] = useState('');
   const [moveIndex, setMoveIndex] = useState(0);
   const [challengeFinished, setChallengeFinished] = useState(false);
-  const [startingFen, setStartingFen] = useState("");
   const [mistakes, setMistakes] = useState([]);
-  const [level, setLevel] = useState([]);
   const [playerData, setPlayerData] = useState({
     challenge: {
       playerColor: '',
@@ -44,9 +43,7 @@ export default function Home() {
     setFinishedComment("");
     setChallengeFinished(false);
     setComment("");
-    setStartingFen(pos.fen);
     setMistakes([]);
-    setLevel(pos.level);
   };
 
   useEffect(() => {
@@ -99,7 +96,7 @@ export default function Home() {
   const sendChallengeResult = async () => {
     const payload = {
       playerColor: playerData.challenge.playerColor,
-      startingFen,
+      startingFen: playerData.challenge.fen,
       moveList: playerData.challenge.moveList,
       mistakes,
     };
@@ -167,7 +164,7 @@ export default function Home() {
     setFen(gameRef.current.fen());
   };
 
-  const delay = 120 * 1.5 ** level;
+  const delay = 120 * 1.5 ** playerData.challenge.level;
   const now = Date.now();
 
   return (
@@ -193,8 +190,8 @@ export default function Home() {
           </div>
           <hr />
           <div>Evaluation: {evaluation !== null ? evaluation : "…"}</div>
-          <div>Move List: <span className={level > 0 ? "spoiler" : ""}>{playerData.challenge?.moveList?.join(', ')}</span></div>
-          <div>Level: {level} — <small style={{ opacity: .6 }}>120 × 1.5<sup>{level}</sup> = {formatDuration(delay)}</small></div>
+          <div>Move List: <span className={playerData.challenge.level > 0 ? "spoiler" : ""}>{playerData.challenge?.moveList?.join(', ')}</span></div>
+          <div>Level: {playerData.challenge.level} — <small style={{ opacity: .6 }}>120 × 1.5<sup>{playerData.challenge.level}</sup> = {formatDuration(delay)}</small></div>
           <hr />
           <small>
             <div>Overdue challenges count: {playerData.overdueCount}</div>
@@ -203,17 +200,21 @@ export default function Home() {
             {playerData.waitingCount > 0 ? <div style={{ opacity: .6 }}>Next waiting challenge will be due in: {formatDuration(playerData.waitingMinDelay / 1000)}</div> : null}
             <div>Branch level sum: {playerData.levelSum}</div>
             <div>Top branches list:
-              <div style={{ paddingLeft: '.5rem', display: 'grid', gridTemplateColumns: 'auto auto auto auto', gap: '0 1rem' }}>{
-                playerData.topChallenges.map(e => <div
-                  key={e.fullMoveList.join()}
-                  style={{ display: "contents" }}
-                >
-                  <div>{e.playerColor}: {e.fullMoveList.join(' ')}</div>
-                  <div>{e.evalFromPlayerPerspective}</div>
-                  <div>lvl {e.level}</div>
-                  <div>{formatDuration(120 * 1.5 ** e.level - (now - e.lastSolved) / 1000)}</div>
-                </div>)
-              }</div>
+              <div style={{ paddingLeft: '.5rem', display: 'grid', gridTemplateColumns: 'auto auto auto auto', gap: '0 1rem' }}>
+                {playerData.topChallenges.map(e => {
+                  const overdue = 120 * 1.5 ** e.level - (now - e.lastSolved) / 1000;
+                  return <div
+                    key={e.fullMoveList.join()}
+                    style={{ display: "contents" }}
+                    className={classNames("branch", { "branch--seen": e.level > 0, "branch--overdue": overdue < 0 })}
+                  >
+                    <div>{e.playerColor}: {e.fullMoveList.join(' ')}</div>
+                    <div>{e.evalFromPlayerPerspective}</div>
+                    <div>lvl {e.level}</div>
+                    <div>{formatDuration(overdue)}</div>
+                  </div>;
+                })}
+              </div>
             </div>
           </small>
         </div>
