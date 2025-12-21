@@ -75273,5 +75273,50 @@
     "bestMove": "g1f3",
     "eval": -0.21,
     "timeMs": 3636
+  },
+  "30_rnbqkb1r/pppp1ppp/5n2/4p3/4P3/3B4/PPPP1PPP/RNBQK1NR w KQkq -": {
+    "bestMove": "b1c3",
+    "eval": -0.18,
+    "timeMs": 1660
+  },
+  "30_rnbqkb1r/pppp1ppp/5n2/4p3/4P3/5Q2/PPPP1PPP/RNB1KBNR w KQkq -": {
+    "bestMove": "f1c4",
+    "eval": -0.34,
+    "timeMs": 4072
+  },
+  "30_r1bqkbnr/pppp1ppp/2n5/4p2Q/4P3/8/PPPP1PPP/RNB1KBNR w KQkq -": {
+    "bestMove": "f1c4",
+    "eval": -0.29,
+    "timeMs": 2512
+  },
+  "30_rnbqkbnr/ppp2ppp/8/3pp3/4P3/2P5/PP1P1PPP/RNBQKBNR w KQkq -": {
+    "bestMove": "e4d5",
+    "eval": -0.24,
+    "timeMs": 5737
+  },
+  "30_rnbqkbnr/pp1p1ppp/2p5/1B2p3/4P3/8/PPPP1PPP/RNBQK1NR w KQkq -": {
+    "bestMove": "b5a4",
+    "eval": -0.29,
+    "timeMs": 4800
+  },
+  "30_r1bqkbnr/pppp1ppp/2n5/4p3/2P1P3/8/PP1P1PPP/RNBQKBNR w KQkq -": {
+    "bestMove": "d2d3",
+    "eval": -0.35,
+    "timeMs": 3618
+  },
+  "30_rnbqk1nr/pppp1ppp/8/2b1p3/4P3/8/PPPPQPPP/RNB1KBNR w KQkq -": {
+    "bestMove": "c2c3",
+    "eval": -0.25,
+    "timeMs": 9268
+  },
+  "30_rnbqkbnr/ppp2ppp/8/3pp3/4P3/6P1/PPPP1P1P/RNBQKBNR w KQkq -": {
+    "bestMove": "d2d3",
+    "eval": -0.54,
+    "timeMs": 6341
+  },
+  "30_rnbqk1nr/pppp1ppp/8/2b1p3/4P2P/8/PPPP1PP1/RNBQKBNR w KQkq -": {
+    "bestMove": "g1f3",
+    "eval": -0.37,
+    "timeMs": 4076
   }
 }

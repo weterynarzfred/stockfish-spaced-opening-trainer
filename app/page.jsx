@@ -208,7 +208,7 @@ export default function Home() {
                     style={{ display: "contents" }}
                     className={classNames("branch", { "branch--seen": e.level > 0, "branch--overdue": overdue < 0 })}
                   >
-                    <div>{e.playerColor}: {e.fullMoveList.join(' ')}</div>
+                    <div>{e.priority} – {e.playerColor}: {e.fullMoveList.join(' ')}</div>
                     <div>{e.evalFromPlayerPerspective}</div>
                     <div>lvl {e.level}</div>
                     <div>{formatDuration(overdue)}</div>

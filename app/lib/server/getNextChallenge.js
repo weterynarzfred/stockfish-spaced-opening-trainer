@@ -19,6 +19,7 @@ function annotateChallengeTiming(challenge, now = Date.now()) {
 }
 
 function sortChallenges(a, b) {
+  if (b.priority !== a.priority) return b.priority - a.priority;
   return a.evalFromPlayerPerspective - b.evalFromPlayerPerspective;
 }
 

@@ -6,7 +6,7 @@ function shouldExpandBranch(branch) {
   return branch.level >= MIN_LEVEL_TO_CONTINUE + branch.moveList.length / 2;
 }
 
-function branchToChallenge(branch, startingFen) {
+function branchToChallenge(branch, startingFen, priority) {
   const challenge = {
     playerColor: branch.playerColor,
     moveList: [...branch.moveList],
@@ -17,6 +17,7 @@ function branchToChallenge(branch, startingFen) {
     fen: startingFen,
     lastSolved: branch.lastSolved,
     lastAttempted: branch.lastAttempted,
+    priority,
   };
 
   if (branch.playerColor === 'b') challenge.moveList.shift();
@@ -29,20 +30,21 @@ async function ensureBranchHasContinuations(branch) {
     branch.continuations = await getContinuations(branch);
 }
 
-export default async function expandAndCollectChallenges(branches, startingFen) {
+export default async function expandAndCollectChallenges(branches, startingFen, parentPriority = 0) {
   const challenges = [];
 
   for (const branchSan in branches) {
     const branch = branches[branchSan];
     const rootFen = startingFen ?? branch.fen;
+    const priority = parentPriority + (branch.priority ?? 0);
 
     if (shouldExpandBranch(branch)) {
       await ensureBranchHasContinuations(branch);
       challenges.push(
-        ...await expandAndCollectChallenges(branch.continuations, rootFen)
+        ...await expandAndCollectChallenges(branch.continuations, rootFen, priority)
       );
     } else {
-      challenges.push(branchToChallenge(branch, rootFen));
+      challenges.push(branchToChallenge(branch, rootFen, priority));
     }
   }
 
