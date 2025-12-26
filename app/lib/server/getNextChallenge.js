@@ -19,8 +19,8 @@ function annotateChallengeTiming(challenge, now = Date.now()) {
 }
 
 function sortChallenges(a, b) {
-  if (b.priority !== a.priority) return b.priority - a.priority;
-  return a.evalFromPlayerPerspective - b.evalFromPlayerPerspective;
+  return (a.evalFromPlayerPerspective - a.priority) -
+    (b.evalFromPlayerPerspective - b.priority);
 }
 
 function isAvailableNow(c) {
@@ -93,6 +93,6 @@ export async function getNextChallenge(player) {
     nextChallenge: available[0],
     challengeStats,
     playerStats,
-    topChallenges: allChallenges.slice(0, 128),
+    topChallenges: allChallenges.slice(0, 256),
   };
 }

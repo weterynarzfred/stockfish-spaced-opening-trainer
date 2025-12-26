@@ -33,7 +33,6 @@ export async function POST(req) {
       m => m === plyIndex || m === plyIndex + 1
     );
 
-    // 3. Update node stats
     node.lastAttempted = timestamp;
 
     if (hasMistake) {
@@ -42,6 +41,7 @@ export async function POST(req) {
       node.level += 1;
       node.lastSolved = timestamp;
     }
+    node.level = Math.min(Math.max(node.level, 0), 31);
 
     const opponentMove = moveList[plyIndex + 2];
     if (!opponentMove || !continuations || !continuations[opponentMove])
