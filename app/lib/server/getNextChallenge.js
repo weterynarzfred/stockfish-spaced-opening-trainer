@@ -93,6 +93,6 @@ export async function getNextChallenge(player) {
     nextChallenge: available[0],
     challengeStats,
     playerStats,
-    topChallenges: allChallenges.slice(0, 256),
+    topChallenges: allChallenges.slice(0, 512),
   };
 }

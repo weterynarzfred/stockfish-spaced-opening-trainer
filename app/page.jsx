@@ -198,7 +198,7 @@ export default function Home() {
             <div>Unseen challenges count: {playerData.notAttemptedCount}</div>
             <div>Waiting challenges count: {playerData.waitingCount}</div>
             {playerData.waitingCount > 0 ? <div style={{ opacity: .6 }}>Next waiting challenge will be due in: {formatDuration(playerData.waitingMinDelay / 1000)}</div> : null}
-            <div>Branch level sum: {playerData.levelSum}</div>
+            <div>Trained branches sum: {(playerData.levelSum / 31).toFixed(2)}</div>
             <div>Top branches list:
               <div style={{ paddingLeft: '.5rem', display: 'grid', gridTemplateColumns: 'auto auto auto auto', gap: '0 1rem' }}>
                 {playerData.topChallenges.map(e => {

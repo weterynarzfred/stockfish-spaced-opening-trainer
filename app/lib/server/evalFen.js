@@ -16,6 +16,7 @@ if (!globalThis.stockfish) {
     awaitingReady: false,
     resolveEval: null,
     readyToken: 0,
+    currentOutput: '',
   };
 
   const engine = globalThis.stockfish.engine;
@@ -28,12 +29,15 @@ if (!globalThis.stockfish) {
 
   engine.stdout.on('data', data => {
     const text = data.toString();
+    globalThis.stockfish.currentOutput += text;
 
     if (text.includes('readyok') && globalThis.stockfish.awaitingReady)
       globalThis.stockfish.awaitingReady = false;
 
     if (text.includes('bestmove') && globalThis.stockfish.resolveEval) {
-      globalThis.stockfish.resolveEval(data);
+      const output = globalThis.stockfish.currentOutput;
+      globalThis.stockfish.currentOutput = '';
+      globalThis.stockfish.resolveEval(output);
       globalThis.stockfish.resolveEval = null;
       globalThis.stockfish.evalInProgress = false;
     }
@@ -66,12 +70,13 @@ async function evalWithStockfish(fen) {
       ? 'position startpos\n'
       : `position fen ${fen}\n`
   );
+  sf.currentOutput = '';
   sf.engine.stdin.write(`go depth ${ENGINE_EVAL_DEPTH}\n`);
 
   return new Promise(resolve => {
     const startTime = Date.now();
-    sf.resolveEval = output =>
-      resolve(parseStockfishResponse(output, startTime, fen));
+    sf.resolveEval = data =>
+      resolve(parseStockfishResponse(data, startTime, fen));
   });
 }
 
@@ -82,6 +87,7 @@ export default async function evalFen(fen) {
   const result = await evalWithStockfish(fen);
   setCache(cacheKey, result);
 
+  console.log(fen, result);
   return { cached: false, ...result };
 }
 
