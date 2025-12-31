@@ -2,6 +2,7 @@ import { Chess } from "chess.js";
 
 import evalFen from "@/app/lib/server/evalFen";
 import getEvalFromPlayerPerspective from "@/app/lib/getEvalFromPlayerPerspective";
+import getLichessContinuations from "@/app/lib/server/getLichessContinuations";
 import { MAX_EVAL } from "@/app/lib/config";
 
 function reconstructGameFromBranch(branch) {
@@ -18,7 +19,7 @@ function isOpponentMoveWorthTraining(game, evaluation) {
   }) <= MAX_EVAL;
 }
 
-function createContinuationBranch(branch, game, move, evaluation) {
+function createContinuationBranch({ branch, game, move, evaluation, gameCount }) {
   game.move(evaluation.bestMove);
   const bestMove = game.history().pop();
   game.undo();
@@ -31,6 +32,7 @@ function createContinuationBranch(branch, game, move, evaluation) {
     lastAttempted: 0,
     eval: evaluation.eval,
     moveList: [...branch.moveList, move.san, bestMove],
+    gameCount,
   };
 }
 
@@ -38,6 +40,7 @@ export default async function getContinuations(branch) {
   const game = reconstructGameFromBranch(branch);
   const possibleMoves = game.moves({ verbose: true });
   const continuations = {};
+  const lichessStats = await getLichessContinuations(game.fen());
 
   for (const move of possibleMoves) {
     game.move(move);
@@ -49,12 +52,13 @@ export default async function getContinuations(branch) {
       continue;
     }
 
-    continuations[move.san] = createContinuationBranch(
+    continuations[move.san] = createContinuationBranch({
       branch,
       game,
       move,
-      evaluation
-    );
+      evaluation,
+      gameCount: lichessStats[move.lan] ?? 0,
+    });
 
     game.undo();
   }

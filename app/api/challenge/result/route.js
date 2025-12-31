@@ -1,4 +1,5 @@
 import { getPlayerData, savePlayerData } from "@/app/lib/server/db";
+import { MAX_BRANCH_LEVEL } from "@/app/lib/config";
 
 export async function POST(req) {
   const {
@@ -41,7 +42,7 @@ export async function POST(req) {
       node.level += 1;
       node.lastSolved = timestamp;
     }
-    node.level = Math.min(Math.max(node.level, 0), 31);
+    node.level = Math.min(Math.max(node.level, 0), MAX_BRANCH_LEVEL);
 
     const opponentMove = moveList[plyIndex + 2];
     if (!opponentMove || !continuations || !continuations[opponentMove])

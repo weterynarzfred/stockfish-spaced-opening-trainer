@@ -1,13 +1,10 @@
 import expandAndCollectChallenges from "@/app/lib/server/expandAndCollectChallenges";
-import { BASE_INTERVAL, MAX_EVAL } from "@/app/lib/config";
+import { MAX_EVAL } from "@/app/lib/config";
 import getEvalFromPlayerPerspective from "@/app/lib/getEvalFromPlayerPerspective";
+import getChallengeInterval from "@/app/lib/getChallengeInterval";
 
 function isChallengeViable(challenge) {
   return challenge.evalFromPlayerPerspective <= MAX_EVAL;
-}
-
-function getChallengeInterval(challenge) {
-  return BASE_INTERVAL * 1.5 ** challenge.level;
 }
 
 function annotateChallengeTiming(challenge, now = Date.now()) {
@@ -19,8 +16,8 @@ function annotateChallengeTiming(challenge, now = Date.now()) {
 }
 
 function sortChallenges(a, b) {
-  return (a.evalFromPlayerPerspective - a.priority) -
-    (b.evalFromPlayerPerspective - b.priority);
+  return ((MAX_EVAL - b.evalFromPlayerPerspective) * b.gameCount) -
+    ((MAX_EVAL - a.evalFromPlayerPerspective) * a.gameCount);
 }
 
 function isAvailableNow(c) {

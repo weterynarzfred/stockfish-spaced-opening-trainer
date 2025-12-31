@@ -2,7 +2,7 @@
 
 A highly opinionated chess opening trainer built for personal use.
 
-This project is a Next.js application that uses Stockfish to generate and drill opening positions using spaced repetition. It deliberately ignores opening names, popularity, and human convention, and instead focuses exclusively on engine evaluation.
+This project is a Next.js application that uses Stockfish to generate and drill opening positions using spaced repetition. It deliberately ignores opening names and instead focuses exclusively on engine evaluation and popularity (via Lichess API).
 
 The goal is not to memorize theory, but to build intuition for a set of opening positions by repeatedly finding the move Stockfish determines to be the best.
 
@@ -25,7 +25,6 @@ Once a challenge reaches a sufficiently high level, it is expanded. All reasonab
 
 This project intentionally does not:
 - teach opening names or classifications
-- prioritize popular or common lines
 - accept “good enough” moves
 - explain *why* a move is good
 

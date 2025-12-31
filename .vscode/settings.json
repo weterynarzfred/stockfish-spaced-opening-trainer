@@ -1,3 +1,10 @@
 {
-  "cSpell.words": ["bestmove", "isready", "setoption", "startpos", "Stockfish"]
+  "cSpell.words": [
+    "bestmove",
+    "isready",
+    "Lichess",
+    "setoption",
+    "startpos",
+    "Stockfish"
+  ]
 }

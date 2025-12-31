@@ -3,8 +3,11 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
-import formatDuration from "@/app/lib/formatDuration";
 import classNames from "classnames";
+
+import formatDuration from "@/app/lib/formatDuration";
+import { MAX_BRANCH_LEVEL } from "@/app/lib/config";
+import getChallengeInterval from "@/app/lib/getChallengeInterval";
 
 export default function Home() {
   const gameRef = useRef(null);
@@ -164,7 +167,6 @@ export default function Home() {
     setFen(gameRef.current.fen());
   };
 
-  const delay = 120 * 1.5 ** playerData.challenge.level;
   const now = Date.now();
 
   return (
@@ -190,25 +192,25 @@ export default function Home() {
           </div>
           <hr />
           <div>Evaluation: {evaluation !== null ? evaluation : "…"}</div>
-          <div>Move List: <span className={playerData.challenge.level > 0 ? "spoiler" : ""}>{playerData.challenge?.moveList?.join(', ')}</span></div>
-          <div>Level: {playerData.challenge.level} — <small style={{ opacity: .6 }}>120 × 1.5<sup>{playerData.challenge.level}</sup> = {formatDuration(delay)}</small></div>
+          <div>Move List: <span className={playerData.challenge?.level > 0 ? "spoiler" : ""}>{playerData.challenge?.moveList?.join(', ')}</span></div>
+          <div>Level: {playerData.challenge?.level}</div>
           <hr />
           <small>
             <div>Overdue challenges count: {playerData.overdueCount}</div>
             <div>Unseen challenges count: {playerData.notAttemptedCount}</div>
             <div>Waiting challenges count: {playerData.waitingCount}</div>
             {playerData.waitingCount > 0 ? <div style={{ opacity: .6 }}>Next waiting challenge will be due in: {formatDuration(playerData.waitingMinDelay / 1000)}</div> : null}
-            <div>Trained branches sum: {(playerData.levelSum / 31).toFixed(2)}</div>
+            <div>Trained branches sum: {(playerData.levelSum / MAX_BRANCH_LEVEL).toFixed(2)}</div>
             <div>Top branches list:
               <div style={{ paddingLeft: '.5rem', display: 'grid', gridTemplateColumns: 'auto auto auto auto', gap: '0 1rem' }}>
                 {playerData.topChallenges.map(e => {
-                  const overdue = 120 * 1.5 ** e.level - (now - e.lastSolved) / 1000;
+                  const overdue = (getChallengeInterval(e) - (now - e.lastSolved)) / 1000;
                   return <div
                     key={e.fullMoveList.join()}
                     style={{ display: "contents" }}
                     className={classNames("branch", { "branch--seen": e.level > 0, "branch--overdue": overdue < 0 })}
                   >
-                    <div>{e.priority} – {e.playerColor}: {e.fullMoveList.join(' ')}</div>
+                    <div>{e.gameCount.toPrecision(5)} – {e.playerColor}: {e.fullMoveList.join(' ')}</div>
                     <div>{e.evalFromPlayerPerspective}</div>
                     <div>lvl {e.level}</div>
                     <div>{formatDuration(overdue)}</div>
