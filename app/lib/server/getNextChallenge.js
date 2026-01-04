@@ -4,7 +4,8 @@ import getEvalFromPlayerPerspective from "@/app/lib/getEvalFromPlayerPerspective
 import getChallengeInterval from "@/app/lib/getChallengeInterval";
 
 function isChallengeViable(challenge) {
-  return challenge.evalFromPlayerPerspective <= MAX_EVAL;
+  return challenge.evalFromPlayerPerspective <= MAX_EVAL &&
+    ((MAX_EVAL - challenge.evalFromPlayerPerspective) * challenge.gameCount) * 100 > 0.01;
 }
 
 function annotateChallengeTiming(challenge, now = Date.now()) {

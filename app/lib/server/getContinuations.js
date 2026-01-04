@@ -12,13 +12,6 @@ function reconstructGameFromBranch(branch) {
   return game;
 }
 
-function isOpponentMoveWorthTraining(game, evaluation) {
-  return getEvalFromPlayerPerspective({
-    playerColor: game.turn(),
-    eval: evaluation.eval
-  }) <= MAX_EVAL;
-}
-
 function createContinuationBranch({ branch, game, move, evaluation, gameCount }) {
   game.move(evaluation.bestMove);
   const bestMove = game.history().pop();
@@ -46,11 +39,6 @@ export default async function getContinuations(branch) {
     game.move(move);
 
     const evaluation = await evalFen(game.fen());
-
-    if (!isOpponentMoveWorthTraining(game, evaluation)) {
-      game.undo();
-      continue;
-    }
 
     continuations[move.san] = createContinuationBranch({
       branch,
