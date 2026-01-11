@@ -4,7 +4,7 @@ import { MAX_BRANCH_LEVEL, MIN_LEVEL_TO_CONTINUE } from "@/app/lib/config";
 
 function shouldExpandBranch(branch) {
   return branch.level >= Math.min(
-    MIN_LEVEL_TO_CONTINUE + branch.moveList.length - (branch.playerColor === "b" ? 2 : 1),
+    MIN_LEVEL_TO_CONTINUE + (branch.moveList.length - (branch.playerColor === "b" ? 2 : 1)) / 2,
     MAX_BRANCH_LEVEL
   );
 }
@@ -50,9 +50,8 @@ export default async function expandAndCollectChallenges(
       challenges.push(
         ...await expandAndCollectChallenges(branch.continuations, rootFen, parentGameCount)
       );
-    } else {
-      challenges.push(branchToChallenge(branch, rootFen, gameCount));
     }
+    challenges.push(branchToChallenge(branch, rootFen, gameCount));
   }
 
   return challenges;

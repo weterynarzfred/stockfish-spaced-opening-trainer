@@ -202,11 +202,11 @@ export default function Home() {
             {playerData.waitingCount > 0 ? <div style={{ opacity: .6 }}>Next waiting challenge will be due in: {formatDuration(playerData.waitingMinDelay / 1000)}</div> : null}
             <div>Trained branches sum: {(playerData.levelSum / MAX_BRANCH_LEVEL).toFixed(2)}</div>
             <div>Top branches list:
-              <div style={{ paddingLeft: '.5rem', display: 'grid', gridTemplateColumns: 'repeat(4, auto)', gap: '0 1rem' }}>
+              <div style={{ paddingLeft: '.5rem', display: 'grid', gridTemplateColumns: 'repeat(5, auto)', gap: '0 1rem' }}>
                 <div>weight</div>
                 {/* <div>popularity</div> */}
                 <div>move list</div>
-                {/* <div>eval<br />(player's persp.)</div> */}
+                <div>eval<br />(player's persp.)</div>
                 <div>level</div>
                 <div>overdue</div>
                 {playerData.topChallenges.map(e => {
@@ -219,7 +219,7 @@ export default function Home() {
                     <div>{((MAX_EVAL - e.evalFromPlayerPerspective) * e.gameCount * 100).toPrecision(5)}</div>
                     {/* <div>{(e.gameCount * 100).toPrecision(5)}</div> */}
                     <div>{e.playerColor}: {e.fullMoveList.join(' ')}</div>
-                    {/* <div>{e.evalFromPlayerPerspective}</div> */}
+                    <div>{e.evalFromPlayerPerspective}</div>
                     <div>lvl {e.level}</div>
                     <div>{formatDuration(overdue)}</div>
                   </div>;

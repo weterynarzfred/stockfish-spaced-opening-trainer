@@ -29,6 +29,7 @@ export async function POST(req) {
 
   for (let depth = 0; depth * 2 < moveList.length; depth++) {
     const plyIndex = depth * 2;
+    const isLastMove = plyIndex + 2 >= moveList.length;
 
     const hasMistake = mistakes.some(
       m => m === plyIndex || m === plyIndex + 1
@@ -37,9 +38,13 @@ export async function POST(req) {
     node.lastAttempted = timestamp;
 
     if (hasMistake) {
-      node.level = Math.floor((node.level - 1) / 2);
+      if (isLastMove) node.level = Math.floor((node.level - 1) / 2);
+      else {
+        node.level -= 1;
+        node.lastSolved = 0;
+      }
     } else {
-      node.level += 1;
+      if (isLastMove) node.level += 1;
       node.lastSolved = timestamp;
     }
     node.level = Math.min(Math.max(node.level, 0), MAX_BRANCH_LEVEL);

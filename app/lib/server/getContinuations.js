@@ -1,9 +1,7 @@
 import { Chess } from "chess.js";
 
 import evalFen from "@/app/lib/server/evalFen";
-import getEvalFromPlayerPerspective from "@/app/lib/getEvalFromPlayerPerspective";
 import getLichessContinuations from "@/app/lib/server/getLichessContinuations";
-import { MAX_EVAL } from "@/app/lib/config";
 
 function reconstructGameFromBranch(branch) {
   const game = new Chess(branch.fen);
