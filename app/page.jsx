@@ -8,6 +8,7 @@ import classNames from "classnames";
 import formatDuration from "@/app/lib/formatDuration";
 import { MAX_BRANCH_LEVEL, MAX_EVAL } from "@/app/lib/config";
 import getChallengeInterval from "@/app/lib/getChallengeInterval";
+import { branchLevelNeededToExpand } from "@/app/lib/shouldBranchExpand";
 
 export default function Home() {
   const gameRef = useRef(null);
@@ -193,34 +194,39 @@ export default function Home() {
           <hr />
           <div>Evaluation: {evaluation !== null ? evaluation : "…"}</div>
           <div>Move List: <span className={playerData.challenge?.level > 0 ? "spoiler" : ""}>{playerData.challenge?.moveList?.join(', ')}</span></div>
-          <div>Level: {playerData.challenge?.level}</div>
+          <div>Level: {playerData.challenge?.level} / {branchLevelNeededToExpand(playerData.challenge)}</div>
           <hr />
           <small>
             <div>Overdue challenges count: {playerData.overdueCount}</div>
             <div>Unseen challenges count: {playerData.notAttemptedCount}</div>
             <div>Waiting challenges count: {playerData.waitingCount}</div>
             {playerData.waitingCount > 0 ? <div style={{ opacity: .6 }}>Next waiting challenge will be due in: {formatDuration(playerData.waitingMinDelay / 1000)}</div> : null}
-            <div>Trained branches sum: {(playerData.levelSum / MAX_BRANCH_LEVEL).toFixed(2)}</div>
+            <div>Trained branches sum: {playerData.expandedLevels} ({playerData.levelProgress?.toFixed(2)})</div>
             <div>Top branches list:
-              <div style={{ paddingLeft: '.5rem', display: 'grid', gridTemplateColumns: 'repeat(5, auto)', gap: '0 1rem' }}>
-                <div>weight</div>
-                {/* <div>popularity</div> */}
-                <div>move list</div>
-                <div>eval<br />(player's persp.)</div>
-                <div>level</div>
-                <div>overdue</div>
+              <div style={{ paddingLeft: '.5rem', display: 'grid', gridTemplateColumns: 'repeat(5, auto)' }}>
+                <div className="branch-list__header">weight</div>
+                {/* <div className="branch-list__header">popularity</div> */}
+                <div className="branch-list__header">move list</div>
+                <div className="branch-list__header">eval<br />(player's persp.)</div>
+                <div className="branch-list__header">level</div>
+                <div className="branch-list__header">overdue</div>
                 {playerData.topChallenges.map(e => {
                   const overdue = (getChallengeInterval(e) - (now - e.lastSolved)) / 1000;
                   return <div
                     key={e.fullMoveList.join()}
                     style={{ display: "contents" }}
-                    className={classNames("branch", { "branch--seen": e.level > 0, "branch--overdue": overdue < 0 })}
+                    className={classNames({
+                      "branch": 1,
+                      "branch--seen": e.level > 0,
+                      "branch--overdue": overdue < 0,
+                      "branch--expanded": e.level >= branchLevelNeededToExpand(e),
+                    })}
                   >
                     <div>{((MAX_EVAL - e.evalFromPlayerPerspective) * e.gameCount * 100).toPrecision(5)}</div>
                     {/* <div>{(e.gameCount * 100).toPrecision(5)}</div> */}
                     <div>{e.playerColor}: {e.fullMoveList.join(' ')}</div>
                     <div>{e.evalFromPlayerPerspective}</div>
-                    <div>lvl {e.level}</div>
+                    <div className="branch__level">lvl {e.level} / {branchLevelNeededToExpand(e)}</div>
                     <div>{formatDuration(overdue)}</div>
                   </div>;
                 })}

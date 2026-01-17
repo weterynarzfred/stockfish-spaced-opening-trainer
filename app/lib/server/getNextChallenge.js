@@ -2,6 +2,7 @@ import expandAndCollectChallenges from "@/app/lib/server/expandAndCollectChallen
 import { MAX_EVAL } from "@/app/lib/config";
 import getEvalFromPlayerPerspective from "@/app/lib/getEvalFromPlayerPerspective";
 import getChallengeInterval from "@/app/lib/getChallengeInterval";
+import shouldExpandBranch, { branchLevelNeededToExpand } from "@/app/lib/shouldBranchExpand";
 
 function isChallengeViable(challenge) {
   return challenge.evalFromPlayerPerspective <= Math.max(MAX_EVAL - challenge.moveList.length / 5, 0.6) &&
@@ -71,7 +72,8 @@ function computePlayerStats(player) {
   const branches = getBranches(player);
 
   return {
-    levelSum: branches.reduce((sum, e) => sum + e.level, 0),
+    expandedLevels: branches.reduce((sum, e) => sum + (shouldExpandBranch(e) ? 1 : 0), 0),
+    levelProgress: branches.reduce((sum, e) => sum + Math.min(e.level / branchLevelNeededToExpand(e), 1), 0),
   };
 }
 
