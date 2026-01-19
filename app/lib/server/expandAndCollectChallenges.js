@@ -11,6 +11,7 @@ function branchToChallenge(branch, startingFen, gameCount) {
     evalFromPlayerPerspective: getEvalFromPlayerPerspective(branch),
     level: branch.level,
     fen: startingFen,
+    currentFen: branch.fen,
     lastSolved: branch.lastSolved,
     lastAttempted: branch.lastAttempted,
     gameCount,

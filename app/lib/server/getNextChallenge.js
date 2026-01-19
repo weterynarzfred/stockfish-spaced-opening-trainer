@@ -4,6 +4,24 @@ import getEvalFromPlayerPerspective from "@/app/lib/getEvalFromPlayerPerspective
 import getChallengeInterval from "@/app/lib/getChallengeInterval";
 import shouldExpandBranch, { branchLevelNeededToExpand } from "@/app/lib/shouldBranchExpand";
 
+function positionKeyFromFen(fen) {
+  let key = `${fen}`.split(' ');
+  key.splice(-1);
+  if (parseInt(key[key.length - 1]) < 20) key.splice(-1);
+  return key.join(' ');
+}
+
+function dedupeChallengesByPosition(challenges) {
+  const seen = new Set();
+  return challenges.filter(ch => {
+    const key = positionKeyFromFen(ch.currentFen);
+
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 function isChallengeViable(challenge) {
   return challenge.evalFromPlayerPerspective <= Math.max(MAX_EVAL - challenge.moveList.length / 5, 0.6) &&
     ((MAX_EVAL - challenge.evalFromPlayerPerspective) * challenge.gameCount) * 100 > 0.01;
@@ -87,12 +105,13 @@ export async function getNextChallenge(player) {
   const challengeStats = computeChallengeStats(allChallenges);
   const playerStats = computePlayerStats(player);
   allChallenges.sort(sortChallenges);
-  const available = allChallenges.filter(isAvailableNow);
+  const dedupedChallenges = dedupeChallengesByPosition(allChallenges);
+  const available = dedupedChallenges.filter(isAvailableNow);
 
   return {
     nextChallenge: available[0],
     challengeStats,
     playerStats,
-    topChallenges: allChallenges.slice(0, 512),
+    topChallenges: dedupedChallenges.slice(0, 512),
   };
 }
