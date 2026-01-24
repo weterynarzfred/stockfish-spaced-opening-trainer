@@ -12,14 +12,17 @@ function positionKeyFromFen(fen) {
 }
 
 function dedupeChallengesByPosition(challenges) {
-  const seen = new Set();
-  return challenges.filter(ch => {
-    const key = positionKeyFromFen(ch.currentFen);
+  const bestByPosition = new Map();
 
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
+  for (const ch of challenges) {
+    const key = positionKeyFromFen(ch.currentFen);
+    const existing = bestByPosition.get(key);
+
+    if (!existing || ch.level > existing.level)
+      bestByPosition.set(key, ch);
+  }
+
+  return [...bestByPosition.values()];
 }
 
 function isChallengeViable(challenge) {
@@ -102,10 +105,10 @@ export async function getNextChallenge(player) {
     .filter(isChallengeViable)
     .map(c => annotateChallengeTiming(c, now));
 
-  const challengeStats = computeChallengeStats(allChallenges);
   const playerStats = computePlayerStats(player);
   allChallenges.sort(sortChallenges);
   const dedupedChallenges = dedupeChallengesByPosition(allChallenges);
+  const challengeStats = computeChallengeStats(dedupedChallenges);
   const available = dedupedChallenges.filter(isAvailableNow);
 
   return {
