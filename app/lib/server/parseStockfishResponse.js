@@ -49,7 +49,6 @@ export default function parseStockfishResponse(data, startTime, fen) {
         result = {
           bestMove,
           eval: evalCp,
-          timeMs: Date.now() - startTime,
         };
       }
     });
