@@ -25,7 +25,7 @@ export async function POST(req) {
   let continuations = node.continuations;
   moveList.unshift(rootKey);
 
-  const timestamp = Date.now();
+  const now = Date.now();
 
   for (let depth = 0; depth * 2 < moveList.length; depth++) {
     const plyIndex = depth * 2;
@@ -35,17 +35,14 @@ export async function POST(req) {
       m => m === plyIndex || m === plyIndex + 1
     );
 
-    node.lastAttempted = timestamp;
+    node.lastAttempted = now;
 
     if (hasMistake) {
-      if (isLastMove) node.level = Math.floor((node.level - 1) / 2);
-      else {
-        node.level -= 1;
-        node.lastSolved = 0;
-      }
-    } else {
-      if (isLastMove) node.level += 1;
-      node.lastSolved = timestamp;
+      node.level -= 3;
+      node.lastSolved = 0;
+    } else if (isLastMove) {
+      node.level += 1;
+      node.lastSolved = now;
     }
     node.level = Math.min(Math.max(node.level, 0), MAX_BRANCH_LEVEL);
 
