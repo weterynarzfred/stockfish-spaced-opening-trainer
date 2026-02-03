@@ -1,5 +1,5 @@
 import expandAndCollectChallenges from "@/app/lib/server/expandAndCollectChallenges";
-import { MAX_EVAL } from "@/app/lib/config";
+import { MAX_EVAL, MIN_CHALLENGE_WEIGHT } from "@/app/lib/config";
 import getEvalFromPlayerPerspective from "@/app/lib/getEvalFromPlayerPerspective";
 import getChallengeInterval from "@/app/lib/getChallengeInterval";
 import shouldExpandBranch, { branchLevelNeededToExpand } from "@/app/lib/shouldBranchExpand";
