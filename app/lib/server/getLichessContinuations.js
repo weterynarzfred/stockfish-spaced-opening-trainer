@@ -4,7 +4,7 @@ let totalGamesPromise = null;
 
 const LICHESS_EXPLORER_URL = "https://explorer.lichess.ovh/lichess";
 const MAX_ATTEMPTS = 5;
-const ATTEMPT_DELAY_MS = 5000;
+const ATTEMPT_DELAY_MS = 15000;
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -19,6 +19,7 @@ async function fetchWithRetry(url, options = {}) {
 
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
     try {
+      console.log(`attempting to fetch ${url} at ${new Date().toLocaleString('pl')}`);
       const res = await fetch(url, options);
 
       if (res.ok) return res;
@@ -76,11 +77,9 @@ async function getTotalGamesInDb() {
 export default async function getLichessContinuations(fen) {
   const url = buildExplorerUrl(fen, 50);
 
-  const [totalGames, res] = await Promise.all([
-    getTotalGamesInDb(),
-    fetchWithRetry(url, { headers: { Accept: "application/json" } }),
-  ]);
-
+  const totalGames = await getTotalGamesInDb();
+  await sleep(1000);
+  const res = await fetchWithRetry(url, { headers: { Accept: "application/json" } });
   const data = await res.json();
 
   const countsByUci = {};
